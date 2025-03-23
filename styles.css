@@ -1,0 +1,64 @@
+/* Main layout: 4 columns */
+.containerRoot {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 columns */
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* each column */
+.col {
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* hidden class for toggling */
+.hidden {
+  display: none !important;
+}
+
+/* sections */
+.section {
+  border: 1px solid #ddd;
+  padding: 8px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+}
+
+.subSection {
+  margin-top: 4px;
+  padding: 6px;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+input[type=text], select {
+  width: 100%;
+  border: 2px solid #aaa;
+  border-radius: 4px;
+  margin: 8px 1px;
+  padding: 8px;
+  box-sizing: border-box;
+  transition: .3s;
+}
+
+input[type=text]:focus, select:focus {
+  border-color: dodgerBlue;
+  box-shadow: 0 0 8px 0 dodgerBlue;
+}
+
+body {
+  font-family: sans-serif;
+  margin: 6px;
+}
+
+#priceOutput {
+  background: #f0f0f0;
+  margin-top: 8px;
+  font-weight: normal;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+}
