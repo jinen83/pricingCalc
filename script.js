@@ -1,3 +1,19 @@
+function checkPassword() {
+  const input = document.getElementById("passwordInput").value;
+  const correctPassword = "dronahq2024"; // 🔐 Set your password here
+
+  if (input === correctPassword) {
+    document.getElementById("loginWrapper").style.display = "none";
+    document.getElementsByClassName("containerRoot")[0].style.display = "block";
+    document.getElementsByClassName("containerRoot")[0].style.display = "grid"; // or "grid" depending on your layout
+
+    init(); // ✅ Boot up the pricing app
+  } else {
+    document.getElementById("loginError").style.display = "block";
+  }
+}
+
+
 /***********************************************
  * script.js: main logic for our pricing app
  ************************************************/
