@@ -1,0 +1,182 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DronaHQ Pricing</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>DronaHQ Pricing</h1>
+
+  <div class="containerRoot">
+    <!-- Column 1: Plan/Model/Deploy, Dev fields, User fields, Usage fields -->
+    <div class="col col1">
+      <div class="section">
+        <h3>Plan / Model / Deployment</h3>
+        <label>Plan</label>
+        <select id="planSelect">
+          <option value="Business">Business</option>
+          <option value="Enterprise">Enterprise</option>
+        </select>
+
+        <label>Deployment</label>
+        <select id="deploySelect">
+          <option value="Cloud">Cloud</option>
+          <option value="Self Host">Self Host</option>
+        </select>
+
+        <label>Model</label>
+        <select id="modelSelect">
+          <!-- We'll rebuild these options dynamically
+               depending on deployment -->
+        </select>
+      </div>
+      
+      <label style="display: block; margin: 10px 0; padding: 5px;">
+  <input type="checkbox" id="addonFlag" /> Include Add-ons
+</label>
+
+      <div class="section">
+        <h3>Developer-Based Fields</h3>
+        <div id="developerSection" class="hidden">
+          <label>Number of Developers</label>
+          <input type="text" id="numDevelopers" placeholder="e.g. 5" />
+          <div class="subSection">
+            <h4>Add-Ons (Developer Model)</h4>
+            <div id="devAddOnsCheck"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>User-Based Fields</h3>
+        <div id="userSection" class="hidden">
+          <label>Number of Users</label>
+          <input type="text" id="numUsers" placeholder="e.g. 100" />
+
+          <div class="subSection">
+            <h4>Add-Ons (User-Based)</h4>
+            <label>PDF</label>
+            <select id="userPdfSelect"></select>
+
+            <label>Automation</label>
+            <select id="userAutoSelect"></select>
+
+            <label>Public Apps</label>
+            <select id="userPublicAppsSelect"></select>
+
+            <label>File Storage</label>
+            <select id="userFileStorageSelect"></select>
+
+            <label>DB Storage</label>
+            <select id="userDbStorageSelect"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Usage-Based Fields</h3>
+        <div id="usageSection" class="hidden">
+          <!-- e.g. usage tiers -->
+          <label>Task Tier</label>
+          <select id="usageTaskTierSelect"></select>
+
+          <div class="subSectionTasks">
+            <label>Usage Metric (optional)</label>
+            <input type="text" id="usageMetric" placeholder="e.g. 10k calls" />
+          </div>
+
+          <div class="subSection">
+            <h4>Add-Ons (Usage-Based)</h4>
+            <label>PDF</label>
+            <select id="usagePdfSelect"></select>
+
+            <label>Automation</label>
+            <select id="usageAutoSelect"></select>
+
+            <label>File Storage</label>
+            <select id="usageFileStorageSelect"></select>
+
+            <label>DB Storage</label>
+            <select id="usageDbStorageSelect"></select>
+
+            <label>Dashboard</label>
+            <select id="usageDashboardSelect"></select>
+
+            <label>Public Apps</label>
+            <select id="usagePublicAppsSelect"></select>
+          </div>
+        </div>
+      </div>
+    </div><!-- end col1 -->
+
+    <!-- Column 2: Name, location, terms, discounts, base license, man-days, etc. -->
+    <div class="col col2">
+      <div class="section">
+        <h3>Other Inputs</h3>
+        <label>Your Name</label>
+        <input type="text" id="txtName" placeholder="(no '@' allowed)" />
+
+        <label>Terms of Contract</label>
+        <select id="termsSelect">
+          <option value="1">1 Year</option>
+          <option value="2">2 Years</option>
+          <option value="3">3 Years</option>
+        </select>
+
+        <label>Location</label>
+        <select id="regionSelect">
+          <option value="">Select Region</option>
+          <option value="india">India</option>
+          <option value="outside">Outside India</option>
+        </select>
+
+        <label>Man-Days (PS)</label>
+        <input type="text" id="psManDays" placeholder="e.g. 5" />
+      </div>
+
+      <div class="section">
+        <h3>Discounts</h3>
+        <label>Base License (%)</label>
+        <input type="text" id="baseDiscount" placeholder="0" />
+
+        <label>Licensing (%)</label>
+        <input type="text" id="licDiscount" placeholder="0" />
+
+        <label>Prof. Services (%)</label>
+        <input type="text" id="psDiscount" placeholder="0" />
+
+        <label>Add-Ons (%)</label>
+        <input type="text" id="addonsDiscount" placeholder="0" />
+      </div>
+
+      <div class="section hidden" id="baseLicenseSection">
+        <h3>Base License (Self Host only)</h3>
+        <input type="text" id="baseLicenseAmount" />
+      </div>
+    </div><!-- end col2 -->
+
+    <!-- Column 3: Pricing summary (License + One-off) -->
+    <div class="col col3">
+      <h2>Pricing Summary</h2>
+      <div class="section" id="priceOutput"></div>
+    </div>
+
+    <!-- Column 4: notes, benefits, terms, etc. -->
+    <div class="col col4">
+      <h2>Notes & Terms</h2>
+      <div class="section" id="notesSection">
+        <p>You can fill in your extra terms, benefits, disclaimers here.</p>
+        <ul>
+          <li>All usage-based plans have 5 devs included.</li>
+          <li>Additional dev = \$1,500/year across all plans.</li>
+          <li>Additional tasks can be purchased in 10k chunks for usage-based only.</li>
+        </ul>
+      </div>
+    </div>
+  </div><!-- end containerRoot -->
+
+  <script src="pricingData.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
