@@ -12,7 +12,7 @@ function checkPassword() {
     document.getElementById("loginError").style.display = "block";
   }
 }
-
+//
 
 /***********************************************
  * script.js: main logic for our pricing app
