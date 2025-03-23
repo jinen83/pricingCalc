@@ -4,11 +4,21 @@
   <meta charset="UTF-8" />
   <title>DronaHQ Pricing</title>
   <link rel="stylesheet" href="styles.css" />
+  
+
 </head>
 <body>
   <h1>DronaHQ Pricing</h1>
+  
+  <div id="loginWrapper">
+  <h2>Enter Password to Access Pricing Tool</h2>
+  <input type="password" id="passwordInput" placeholder="Enter password" />
+  <button onclick="checkPassword()">Login</button>
+  <p id="loginError" style="color: red; display: none;">Incorrect password. Try again.</p>
+</div>
+  
 
-  <div class="containerRoot">
+  <div class="containerRoot" style="display: none;">
     <!-- Column 1: Plan/Model/Deploy, Dev fields, User fields, Usage fields -->
     <div class="col col1">
       <div class="section">
