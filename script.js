@@ -783,7 +783,7 @@ function buildDeveloperAddOns(){
 }
 
 // main calc function
-function calcPrice(){
+/*function calcPrice(){
   // We'll do a partial example, focusing on the layout
   // 1) We'll do two major sections: License & One-off
   //    License => base license, user/dev or usage licensing, add-ons
@@ -792,6 +792,7 @@ function calcPrice(){
 //alert("new change")
   let licenseSubtotal = 0;
   let oneOffSubtotal  = 0;
+  
    //alert("ok");
   // e.g. let's say base license is read from JSON
   // let's read plan, model, deploy, etc. from the UI
@@ -885,10 +886,11 @@ function calcPrice(){
    addonsAfter = calculateAddOnsTotal();
 licenseSubtotal += addonsAfter;
   ///priceOutput.innerHTML = html;
+  console.log("here: ",addonsAfter);
   document.getElementById("subtotal").innerHTML="License Subtotal: " + licenseSubtotal+"$";
   
   document.getElementById("total").innerHTML= "$"+(oneOffSubtotal+licenseSubtotal);
-}
+}*/
 
 function resetAllAddOns() {
   // Clear user-based selects
@@ -912,8 +914,176 @@ function resetAllAddOns() {
   if (usageMetricInp) usageMetricInp.value = "";
 }
 
+function calcPrice(){
+  // --- CALCULATIONS ---
+  let licenseSubtotal = 0;
+  let oneOffSubtotal  = 0;
+
+  // Get values from the UI
+  let planVal   = planSelect.value;
+  let deployVal = deploySelect.value;
+  let modelVal  = modelSelect.value;
+  
+  // Base License
+  let baseLicenseVal = getBaseLicense(modelVal, planVal, deployVal);
+  let baseDiscPct = parseFloat(baseDiscountInp.value) || 0;
+  let baseDiscAmt = baseLicenseVal * (baseDiscPct / 100);
+  let baseLicenseAfter = baseLicenseVal - baseDiscAmt;
+  licenseSubtotal += baseLicenseAfter;
+
+  // Licensing Cost (Developer, User or Usage)
+  let licensingCost = 0;
+  if(modelVal === "developerBased"){
+    let devCount = parseInt(numDevelopersInp.value, 10) || 0;
+    licensingCost = getDeveloperLicensingCost(planVal, deployVal, devCount);
+  }
+  else if(modelVal === "userBased"){
+    const userCount = parseInt(numUsersInp.value, 10) || 0;
+    licensingCost = getUserLicensingCost(planVal, deployVal, userCount);
+  }
+  else if(modelVal === "usageBased"){
+    const tierKey = usageTaskTierSelect.value; // e.g., "500k", "1mn"
+    const tierList = pricingData.licensingTiers.usageBased[planVal];
+    const matchedTier = tierList?.find(t => t.tierKey === tierKey);
+    if(matchedTier){
+      const yearlyCost = matchedTier.monthly * 12;
+      licensingCost = yearlyCost;
+      if(usageMetricInp){
+        usageMetricInp.value = `$${yearlyCost}`;
+      }
+    }
+  }
+  let licDiscPct = parseFloat(licDiscountInp.value) || 0;
+  let licDiscAmt = licensingCost * (licDiscPct / 100);
+  let licensingAfter = licensingCost - licDiscAmt;
+  licenseSubtotal += licensingAfter;
+
+  // Add-ons cost is calculated separately
+  let addOnsCost = 0; // (if you wish to add any pre-discount cost here)
+  // (developer add-ons and select-based add-ons are summed in calculateAddOnsTotal)
+  let addonsAfter = calculateAddOnsTotal();
+  licenseSubtotal += addonsAfter;
+
+  // Professional Services (One-off)
+  let regionVal = regionSelect.value.trim().toLowerCase();
+  let dailyRate = (regionVal === "india") ? pricingData.professionalServices.rateIndia : pricingData.professionalServices.rateOutside;
+  let manDays = parseInt(psManDaysInp.value, 10) || 0;
+  let psCost  = dailyRate * manDays;
+  let psDiscPct = parseFloat(psDiscountInp.value) || 0;
+  let psDiscAmt = psCost * (psDiscPct / 100);
+  let psAfter   = psCost - psDiscAmt;
+  oneOffSubtotal += psAfter;
+
+  // --- BUILD SUMMARY OUTPUT ---
+  // Build the Inclusions section
+  let inclusionsHtml = `<h3>Inclusions</h3>`;
+  inclusionsHtml += `<div>Plan: <strong>${planVal}</strong></div>`;
+  inclusionsHtml += `<div>Model: <strong>${modelVal}</strong></div>`;
+  inclusionsHtml += `<div>Deployment: <strong>${deployVal}</strong></div>`;
+
+  // Show details based on the pricing model
+  if(modelVal === "developerBased"){
+    let devCount = numDevelopersInp.value || "0";
+    inclusionsHtml += `<div>Developers: <strong>${devCount}</strong></div>`;
+  }
+  else if(modelVal === "userBased"){
+    let userCount = numUsersInp.value || "0";
+    inclusionsHtml += `<div>Users: <strong>${userCount}</strong></div>`;
+  }
+  else if(modelVal === "usageBased"){
+    let tierSelected = usageTaskTierSelect.value || "N/A";
+    inclusionsHtml += `<div>Usage Tier: <strong>${tierSelected}</strong></div>`;
+    /*if(usageMetricInp && usageMetricInp.value){
+      inclusionsHtml += `<div>Usage Metric: <strong>${usageMetricInp.value}</strong></div>`;
+    }*/
+  }
+  
+  // Build a list of selected add-ons
+  inclusionsHtml += `<div>Add-ons: <strong>${getSelectedAddOnsSummary()}</strong></div>`;
+
+  // Build the License Summary block
+  let summaryHtml = `
+    <h3>License Summary</h3>
+    <div>
+      <div>Base License: \$${baseLicenseVal}</div>
+      <div style="font-size:0.85em; font-style:italic;">License Discount: -\$${baseDiscAmt.toFixed(2)}</div>
+    </div>
+    <div>
+      <div>Licensing: \$${licensingCost}</div>
+      <div style="font-size:0.85em; font-style:italic;">Licensing Discount: -\$${licDiscAmt.toFixed(2)}</div>
+    </div>
+    <div>
+      <div>Add-ons: \$${addonsAfter} (Pre-discount)</div>
+      <div style="font-size:0.85em; font-style:italic;">Add-ons Discount applied, Net: \$${addonsAfter.toFixed(2)}</div>
+    </div>
+    <strong id="subtotal">License Subtotal: \$${licenseSubtotal.toFixed(2)}</strong>
+    
+    <hr/>
+    
+    <h3>One-off</h3>
+    <div>
+      <div>Professional Services: \$${psCost}</div>
+      <div style="font-size:0.85em; font-style:italic;">One-off Discount: -\$${psDiscAmt.toFixed(2)}</div>
+    </div>
+    <strong>One-off Subtotal: \$${oneOffSubtotal.toFixed(2)}</strong>
+    
+    <hr/>
+    
+    <h3>Total</h3>
+    <div id="total"><strong>\$${(licenseSubtotal + oneOffSubtotal).toFixed(2)}</strong></div>
+  `;
+
+  // Combine Inclusions and Summary into one output
+  priceOutput.innerHTML = inclusionsHtml + `<hr/>` + summaryHtml;
+}
+
+
+// Helper: Get a summary string of selected add-ons.
+function getSelectedAddOnsSummary(){
+  let addonsList = [];
+
+  // For developer-based add-ons (checkboxes)
+  const devCheckboxes = document.querySelectorAll(".devAddonCheck:checked");
+  devCheckboxes.forEach(chk => {
+    addonsList.push(chk.value);
+  });
+
+  // For user-based add-ons (selects)
+  const userAddOnSelects = [
+    { elem: userPdfSelect, name: "PDF" },
+    { elem: userAutoSelect, name: "Automation" },
+    { elem: userPublicAppsSelect, name: "Public Apps" },
+    { elem: userFileStorageSelect, name: "File Storage" },
+    { elem: userDbStorageSelect, name: "DB Storage" }
+  ];
+  userAddOnSelects.forEach(item => {
+    if(item.elem && item.elem.value){
+      addonsList.push(`${item.name} (${item.elem.value})`);
+    }
+  });
+
+  // For usage-based add-ons (selects)
+  const usageAddOnSelects = [
+    { elem: usagePdfSelect, name: "PDF" },
+    { elem: usageAutoSelect, name: "Automation" },
+    { elem: usagePublicAppsSelect, name: "Public Apps" },
+    { elem: usageFileStorageSelect, name: "File Storage" },
+    { elem: usageDbStorageSelect, name: "DB Storage" },
+    { elem: usageDashboardSelect, name: "Dashboard" }
+  ];
+  usageAddOnSelects.forEach(item => {
+    if(item.elem && item.elem.value){
+      addonsList.push(`${item.name} (${item.elem.value})`);
+    }
+  });
+
+  return addonsList.length ? addonsList.join(', ') : 'None';
+}
+
+
 
 function calculateAddOnsTotal() {
+ 
   let total = 0;
   const discountPc = parseFloat(document.getElementById("addonsDiscount").value) || 0;
   const deployVal = deploySelect.value;
@@ -952,17 +1122,19 @@ function calculateAddOnsTotal() {
   });
 
   // Handle developer checkboxes (map value => addon + qty)
- const tc =  devAddonCalc();
+  
+ if(modelSelect.value=="developerBased")  
+  total =  devAddonCalc();
 
 
   // Apply discount
-  const discountAmount = (discountPc / 100) * tc;
-  const discounted = tc - discountAmount;
+  const discountAmount = (discountPc / 100) * total;
+  const discounted = total - discountAmount;
 
   // Update the DOM
   const addonsDiv = document.getElementById("addons");
 if (addonsDiv) {
-  addonsDiv.innerHTML = `Add-ons: $${tc.toFixed(2)} minus discount (${discountPc}%) = $${discounted.toFixed(2)}`;
+  addonsDiv.innerHTML = `Add-ons: $${total.toFixed(2)} minus discount (${discountPc}%) = $${discounted.toFixed(2)}`;
 }
 
   
