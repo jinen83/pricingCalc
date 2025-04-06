@@ -884,6 +884,7 @@ function calcPrice(){
   priceOutput.innerHTML = html;
    addonsAfter = calculateAddOnsTotal();
 licenseSubtotal += addonsAfter;
+  ///priceOutput.innerHTML = html;
   document.getElementById("subtotal").innerHTML="License Subtotal: " + licenseSubtotal+"$";
   
   document.getElementById("total").innerHTML= "$"+(oneOffSubtotal+licenseSubtotal);
@@ -951,36 +952,17 @@ function calculateAddOnsTotal() {
   });
 
   // Handle developer checkboxes (map value => addon + qty)
-const devCheckboxes = document.querySelectorAll(".devAddonCheck:checked");
-devCheckboxes.forEach(checkbox => {
-  const rawVal = checkbox.value; // e.g., "unlimitedPdf"
-  const deployVal = deploySelect.value;
+ const tc =  devAddonCalc();
 
-  // Extract addon type and qty from value (e.g., "unlimitedPdf" => "PDF" + "Unlimited")
-  const qtyMatch = rawVal.match(/^unlimited/i);
-  const qty = qtyMatch ? "Unlimited" : "";
-  const addon = rawVal.replace(/^unlimited/i, '').replace(/([a-z])([A-Z])/g, '$1 $2'); // "Pdf" => "PDF"
-
-  const match = pricingData.addOnsFlat.find(item =>
-    normalize(item.deployment) === normalize(deployVal) &&
-    normalize(item.model) === normalize("Developer") &&
-    normalize(item.addon) === normalize(addon) &&
-    normalize(item.qty) === normalize(qty)
-  );
-
-  if (match && match.price_per_year) {
-    total += match.price_per_year;
-  }
-});
 
   // Apply discount
-  const discountAmount = (discountPc / 100) * total;
-  const discounted = total - discountAmount;
+  const discountAmount = (discountPc / 100) * tc;
+  const discounted = tc - discountAmount;
 
   // Update the DOM
   const addonsDiv = document.getElementById("addons");
 if (addonsDiv) {
-  addonsDiv.innerHTML = `Add-ons: $${total.toFixed(2)} minus discount (${discountPc}%) = $${discounted.toFixed(2)}`;
+  addonsDiv.innerHTML = `Add-ons: $${tc.toFixed(2)} minus discount (${discountPc}%) = $${discounted.toFixed(2)}`;
 }
 
   
@@ -990,7 +972,25 @@ if (addonsDiv) {
   
 }
 
+function devAddonCalc()
+{
+  const devCheckboxes = document.querySelectorAll(".devAddonCheck:checked");
+let totalAddonCost = 0;
 
+devCheckboxes.forEach(checkbox => {
+  const addonKey = checkbox.value; // e.g., "unlimitedPdf", "dbStorage"
+  const price = pricingData.addOns.developerBased[addonKey];
+
+  if (price) {
+    totalAddonCost += price;
+  } else {
+    console.warn(`Addon not found in pricing data: ${addonKey}`);
+  }
+});
+
+  return(totalAddonCost);
+//console.log("Total Developer Add-on Cost:", totalAddonCost);
+}
 
 
 // read base license from JSON
