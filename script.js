@@ -12,7 +12,7 @@ function checkPassword() {
     document.getElementById("loginError").style.display = "block";
   }
 }
-// checking
+
 
 /***********************************************
  * script.js: main logic for our pricing app
@@ -763,26 +763,7 @@ function onPlanModelDeployChange(){
   calcPrice();
 }
 
-
-function checkPassword() {
-  const input = document.getElementById("passwordInput").value;
-  const correctPassword = "dronahq2024"; // 🔐 Set your password here
-
-  if (input === correctPassword) {
-    document.getElementById("loginWrapper").style.display = "none";
-    document.getElementsByClassName("containerRoot")[0].style.display = "block";
-    document.getElementsByClassName("containerRoot")[0].style.display = "grid"; // or "grid" depending on your layout
-
-    init(); // ✅ Boot up the pricing app
-  } else {
-    document.getElementById("loginError").style.display = "block";
-  }
-}
-
-
 // builds the developer-based add-on checkboxes from JSON
-
-
 function buildDeveloperAddOns(){
   
   let devObj = pricingData.addOns.developerBased;
