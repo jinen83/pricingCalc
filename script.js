@@ -1,3 +1,4 @@
+let addOnsCost = 0;
 function checkPassword() {
   const input = document.getElementById("passwordInput").value;
   const correctPassword = "dronahq2024"; // 🔐 Set your password here
@@ -959,7 +960,7 @@ function calcPrice(){
   licenseSubtotal += licensingAfter;
 
   // Add-ons cost is calculated separately
-  let addOnsCost = 0; // (if you wish to add any pre-discount cost here)
+  //let addOnsCost = 0; // (if you wish to add any pre-discount cost here)
   // (developer add-ons and select-based add-ons are summed in calculateAddOnsTotal)
   let addonsAfter = calculateAddOnsTotal();
   licenseSubtotal += addonsAfter;
@@ -1013,7 +1014,7 @@ function calcPrice(){
       <div style="font-size:0.85em; font-style:italic;">Licensing Discount: -\$${licDiscAmt.toFixed(2)}</div>
     </div>
     <div>
-      <div>Add-ons: \$${addonsAfter} (Pre-discount)</div>
+      <div>Add-ons: \$${addOnsCost} (Pre-discount)</div>
       <div style="font-size:0.85em; font-style:italic;">Add-ons Discount applied, Net: \$${addonsAfter.toFixed(2)}</div>
     </div>
     <strong id="subtotal">License Subtotal: \$${licenseSubtotal.toFixed(2)}</strong>
@@ -1083,7 +1084,7 @@ function getSelectedAddOnsSummary(){
 
 
 function calculateAddOnsTotal() {
- 
+ addOnsCost = 0;
   let total = 0;
   const discountPc = parseFloat(document.getElementById("addonsDiscount").value) || 0;
   const deployVal = deploySelect.value;
@@ -1140,6 +1141,7 @@ if (addonsDiv) {
   
   /*document.getElementById("addons").innerHTML =
     `Add-ons: $${total.toFixed(2)} minus discount (${discountPc}%) = $${discounted.toFixed(2)}`;*/
+  addOnsCost = total;
   return discounted;
   
 }
