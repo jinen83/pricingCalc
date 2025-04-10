@@ -569,6 +569,34 @@ pricingData.addOnsFlat =[
   
 ];
 
+pricingData.licensingTiers.usageBased= {
+  "Business": {
+    "Cloud": [
+      { "tierKey": "125k", "monthly": 500 },
+      { "tierKey": "250k", "monthly": 1000 }
+    ],
+    "Self Host": [
+      { "tierKey": "300k", "monthly": 1500 },
+      { "tierKey": "500k", "monthly": 2500 },
+      { "tierKey": "1mn",  "monthly": 5000 }
+    ]
+  },
+  "Enterprise": {
+    "Cloud": [
+      { "tierKey": "500k", "monthly": 3500 },
+      { "tierKey": "1mn",  "monthly": 7000 },
+      { "tierKey": "2mn",  "monthly": 12000 },
+      { "tierKey": "5mn",  "monthly": 25000 }
+    ],
+    "Self Host": [
+      { "tierKey": "500k", "monthly": 3500 },
+      { "tierKey": "1mn",  "monthly": 7000 },
+      { "tierKey": "2mn",  "monthly": 12000 },
+      { "tierKey": "5mn",  "monthly": 25000 }
+    ]
+  }
+};
+
 // references
 const planSelect       = document.getElementById('planSelect');
 const modelSelect      = document.getElementById('modelSelect');
@@ -942,7 +970,7 @@ function calcPrice(){
     const userCount = parseInt(numUsersInp.value, 10) || 0;
     licensingCost = getUserLicensingCost(planVal, deployVal, userCount);
   }
-  else if(modelVal === "usageBased"){
+  /*else if(modelVal === "usageBased"){
     const tierKey = usageTaskTierSelect.value; // e.g., "500k", "1mn"
     const tierList = pricingData.licensingTiers.usageBased[planVal];
     const matchedTier = tierList?.find(t => t.tierKey === tierKey);
@@ -953,7 +981,18 @@ function calcPrice(){
         usageMetricInp.value = `$${yearlyCost}`;
       }
     }
+  }*/
+  else  if (modelVal === "usageBased") {
+  const tierKey = usageTaskTierSelect.value;
+  const tierList = pricingData.licensingTiers.usageBased[planVal]?.[deployVal];
+  const matchedTier = tierList?.find(t => t.tierKey === tierKey);
+
+  if (matchedTier) {
+    const yearlyCost = matchedTier.monthly * 12;
+    licensingCost = yearlyCost;
+    if (usageMetricInp) usageMetricInp.value = `$${yearlyCost}`;
   }
+}
   let licDiscPct = parseFloat(licDiscountInp.value) || 0;
   let licDiscAmt = licensingCost * (licDiscPct / 100);
   let licensingAfter = licensingCost - licDiscAmt;
@@ -1430,7 +1469,7 @@ selectElem.appendChild(defaultOption);
   }
 }
 
-function buildUsageLicenseTiers(planVal) {
+/*function buildUsageLicenseTiers(planVal) {
   usageTaskTierSelect.innerHTML = "";
   const tierList = pricingData.licensingTiers.usageBased[planVal];
   if (!tierList) return;
@@ -1448,7 +1487,29 @@ function buildUsageLicenseTiers(planVal) {
     opt.textContent = `${tier.tierKey} — $${tier.monthly}/mo`;
     usageTaskTierSelect.appendChild(opt);
   });
+}*/
+
+  function buildUsageLicenseTiers(planVal) {
+  usageTaskTierSelect.innerHTML = "";
+  const deployVal = deploySelect.value;
+  const tierList = pricingData.licensingTiers.usageBased[planVal]?.[deployVal];
+  if (!tierList) return;
+
+  const defaultOpt = document.createElement("option");
+  defaultOpt.textContent = "Select a tier";
+  defaultOpt.disabled = false;
+  defaultOpt.selected = true;
+  defaultOpt.value = "";
+  usageTaskTierSelect.appendChild(defaultOpt);
+
+  tierList.forEach(tier => {
+    const opt = document.createElement("option");
+    opt.value = tier.tierKey;
+    opt.textContent = `${tier.tierKey} — $${tier.monthly}/mo`;
+    usageTaskTierSelect.appendChild(opt);
+  });
 }
+
 
 
 // when page loads
