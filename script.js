@@ -758,7 +758,7 @@ function hideAll(){
   developerSec.classList.add('hidden');
   userSec.classList.add('hidden');
   usageSec.classList.add('hidden');
-  baseLicenseSec.classList.add('hidden');
+  //baseLicenseSec.classList.add('hidden');
 }
 
 function onPlanModelDeployChange(){
