@@ -881,12 +881,12 @@ function buildDeveloperAddOns(){
 
 function resetAllAddOns() {
   // Clear user-based selects
-  [userPdfSelect, userAutoSelect, userPublicAppsSelect, userFileStorageSelect, userDbStorageSelect].forEach(select => {
+  [userPdfSelect, userAutoSelect, userPublicAppsSelect, userFileStorageSelect, userDbStorageSelect,userMcpSelect].forEach(select => {
     if (select) select.selectedIndex = 0;
   });
 
   // Clear usage-based selects
-  [usagePdfSelect, usageAutoSelect, usagePublicAppsSelect, usageFileStorageSelect, usageDbStorageSelect, usageDashboardSelect].forEach(select => {
+  [usagePdfSelect, usageAutoSelect, usagePublicAppsSelect, usageFileStorageSelect, usageDbStorageSelect, usageDashboardSelect,usageDashboardSelect].forEach(select => {
     if (select) select.selectedIndex = 0;
   });
 
