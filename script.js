@@ -126,7 +126,8 @@ const pricingData = {
       "unlimitedPublicApps": 15000,
       "securedEmbed": 2500,
       "fileStorage": 2500,
-      "dbStorage": 2500
+      "dbStorage": 2500,
+      "mcp": 2500
     },
     "userBased": {
       "pdf": [
@@ -154,6 +155,11 @@ const pricingData = {
         { "tier": "10GB",  "annualCost": 1200 },
         { "tier": "50GB",  "annualCost": 2400 },
         { "tier": "unlimited", "annualCost": 600 }
+      ],
+       "mcp": [
+        { "tier": "20k runs", "annualCost": 30 },
+        { "tier": "60k runs", "annualCost": 75 },
+        { "tier": "150k runs", "annualCost": 150 }
       ]
     },
     "usageBased": {
@@ -184,7 +190,8 @@ const pricingData = {
         ]
       },
       "dashboardUnlimitedMo": 1000,
-      "publicAppsUnlimitedMo": 50
+      "publicAppsUnlimitedMo": 50,
+      "mcp": 50
     }
   }
 };
@@ -565,7 +572,60 @@ pricingData.addOnsFlat =[
   "qty": "Activation",
   "price_per_year": 3000,
   "notes": "Dashboard access activation fee for usage-based cloud deployment"
-}
+},
+  // MCP Add-on for Developer Based Model
+  {
+    "deployment": "Self host",
+    "model": "Developer",
+    "addon": "MCP",
+    "qty": "Unlimited",
+    "price_per_year": 2500,
+    "notes": ""
+  },
+
+  // MCP Add-on for User Based Model (Self Host & Cloud)
+  {
+    "deployment": "Self host", "model": "User Based", "addon": "MCP",
+    "qty": "20k runs", "price_per_year": 30, "notes": ""
+  },
+  {
+    "deployment": "Self host", "model": "User Based", "addon": "MCP",
+    "qty": "60k runs", "price_per_year": 75, "notes": ""
+  },
+  {
+    "deployment": "Self host", "model": "User Based", "addon": "MCP",
+    "qty": "150k runs", "price_per_year": 150, "notes": ""
+  },
+  {
+    "deployment": "Cloud", "model": "User Based", "addon": "MCP",
+    "qty": "20k runs", "price_per_year": 30, "notes": ""
+  },
+  {
+    "deployment": "Cloud", "model": "User Based", "addon": "MCP",
+    "qty": "60k runs", "price_per_year": 75, "notes": ""
+  },
+  {
+    "deployment": "Cloud", "model": "User Based", "addon": "MCP",
+    "qty": "150k runs", "price_per_year": 150, "notes": ""
+  },
+
+  // MCP Add-on for Usage Based Model (Self Host & Cloud)
+  {
+    "deployment": "Self host",
+    "model": "Usage Based",
+    "addon": "MCP",
+    "qty": "Activation",
+    "price_per_year": 600, // This is $50/month * 12
+    "notes": "Monthly activation fee for MCP."
+  },
+  {
+    "deployment": "Cloud",
+    "model": "Usage Based",
+    "addon": "MCP",
+    "qty": "Activation",
+    "price_per_year": 600, // This is $50/month * 12
+    "notes": "Monthly activation fee for MCP."
+  }
   
 ];
 
