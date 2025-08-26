@@ -1,7 +1,7 @@
 let addOnsCost = 0;
 function checkPassword() {
   const input = document.getElementById("passwordInput").value;
-  const correctPassword = "dronahq2024"; // 🔐 Set your password here
+  const correctPassword = "dronahq2025"; // 🔐 Set your password here
 
   if (input === correctPassword) {
     document.getElementById("loginWrapper").style.display = "none";
