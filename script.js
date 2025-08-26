@@ -1100,7 +1100,9 @@ function calculateAddOnsTotal() {
     { elem: usagePublicAppsSelect, model: "Usage Based", addon: "Public Apps" },
     { elem: usageFileStorageSelect,model: "Usage Based", addon: "File Storage" },
     { elem: usageDbStorageSelect,  model: "Usage Based", addon: "DB Storage" },
-    { elem: usageDashboardSelect,  model: "Usage Based", addon: "Dashboard" }
+    { elem: usageDashboardSelect,  model: "Usage Based", addon: "Dashboard" },
+    { elem: document.getElementById('userMcpSelect'), model: "User Based", addon: "MCP" },
+    { elem: document.getElementById('usageMcpSelect'), model: "Usage Based", addon: "MCP" }
   ];
 
   allAddonSelects.forEach(({ elem, model, addon }) => {
