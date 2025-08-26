@@ -684,6 +684,9 @@ const usageFileStorageSelect= document.getElementById('usageFileStorageSelect');
 const usageDbStorageSelect = document.getElementById('usageDbStorageSelect');
 const usageDashboardSelect = document.getElementById('usageDashboardSelect');
 const usagePublicAppsSelect= document.getElementById('usagePublicAppsSelect');
+const userMcpSelect = document.getElementById('userMcpSelect');
+const usageMcpSelect = document.getElementById('usageMcpSelect');
+
 
 const numDevelopersInp     = document.getElementById('numDevelopers');
 const numUsersInp          = document.getElementById('numUsers');
@@ -735,6 +738,8 @@ function init(){
   userPublicAppsSelect.addEventListener('change', calcPrice);
   userFileStorageSelect.addEventListener('change', calcPrice);
   userDbStorageSelect.addEventListener('change', calcPrice);
+  usageMcpSelect.addEventListener('change', calcPrice);
+userMcpSelect.addEventListener('change', calcPrice);
   // We'll also build developer-based add-on checkboxes from pricingData
   buildDeveloperAddOns();
 
@@ -872,114 +877,7 @@ function buildDeveloperAddOns(){
 }
 
 // main calc function
-/*function calcPrice(){
-  // We'll do a partial example, focusing on the layout
-  // 1) We'll do two major sections: License & One-off
-  //    License => base license, user/dev or usage licensing, add-ons
-  //    One-off => professional services
-  // Then each section has a sub-total
-//alert("new change")
-  let licenseSubtotal = 0;
-  let oneOffSubtotal  = 0;
-  
-   //alert("ok");
-  // e.g. let's say base license is read from JSON
-  // let's read plan, model, deploy, etc. from the UI
-  let planVal   = planSelect.value;
-  let deployVal = deploySelect.value;
-  let modelVal  = modelSelect.value;
-  
-  // find base license from JSON
-  let baseLicenseVal = getBaseLicense(modelVal, planVal, deployVal);
-  // apply base discount
-  let baseDiscPct = parseFloat(baseDiscountInp.value)||0;
-  let baseDiscAmt = baseLicenseVal*(baseDiscPct/100);
-  let baseLicenseAfter = baseLicenseVal - baseDiscAmt;
 
-   //let licensingCost=0;
-  //console.log("here");
-  // add that to licenseSubtotal
-  licenseSubtotal += baseLicenseAfter;
-
-  // licensing cost => placeholder
-  let licensingCost = 0;
-  if(modelVal==="developerBased"){
-    let devCount = parseInt(numDevelopersInp.value,10)||0;
-    licensingCost = getDeveloperLicensingCost(planVal, deployVal, devCount);
-  }
-  if (modelVal === "userBased") {
-  const userCount = parseInt(numUsersInp.value, 10) || 0;
-  licensingCost = getUserLicensingCost(planVal, deployVal, userCount);
-}
-  if (modelVal === "usageBased") {
-  const tierKey = usageTaskTierSelect.value; // e.g., "500k", "1mn"
-  const tierList = pricingData.licensingTiers.usageBased[planVal];
-
-  const matchedTier = tierList?.find(t => t.tierKey === tierKey);
-
-  if (matchedTier) {
-    const yearlyCost = matchedTier.monthly * 12;
-    licensingCost = yearlyCost;
-
-    // If usageMetricInp is meant to show the cost, update it:
-    if (usageMetricInp) {
-      usageMetricInp.value = `$${yearlyCost}`;
-    }
-  }
-}
-
-  
-  let licDiscPct = parseFloat(licDiscountInp.value)||0;
-  let licDiscAmt = licensingCost*(licDiscPct/100);
-  let licensingAfter= licensingCost-licDiscAmt;
-  licenseSubtotal += licensingAfter;
-
-  // add-ons => placeholder
-  let addOnsCost = 0;
-  let addonsDiscPct = parseFloat(addonsDiscountInp.value)||0;
-  let addonsDiscAmt = addOnsCost*(addonsDiscPct/100);
-  let addonsAfter = addOnsCost-addonsDiscAmt;
-  licenseSubtotal += addonsAfter;
-
-  // professional services => one-off
-  let regionVal = regionSelect.value.trim().toLowerCase();
-  let dailyRate = (regionVal==="india")? pricingData.professionalServices.rateIndia : pricingData.professionalServices.rateOutside;
-  let manDays = parseInt(psManDaysInp.value,10)||0;
-  let psCost  = dailyRate*manDays;
-
-  let psDiscPct = parseFloat(psDiscountInp.value)||0;
-  let psDiscAmt = psCost*(psDiscPct/100);
-  let psAfter   = psCost-psDiscAmt;
-
-  oneOffSubtotal += psAfter;
-
-  // now build the summary
-  let html=`
-    <h3>License</h3>
-    <div>Base License: \$${baseLicenseVal} minus discount = \$${baseLicenseAfter}</div>
-    <div>Licensing: \$${licensingCost} minus discount = \$${licensingAfter}</div>
-    <div id='addons'>Add-ons: \$${addOnsCost} minus discount = \$${addonsAfter}</div>
-    <strong id="subtotal">License Subtotal: \$${licenseSubtotal}</strong>
-
-    <hr/>
-    <h3>One-off</h3>
-    <div>Professional Services: \$${psCost} minus discount = \$${psAfter}</div>
-    <strong>One-off Subtotal: \$${oneOffSubtotal}</strong>
-
-    <hr/>
-    <h3>Total</h3><div id="total">
-    \$${licenseSubtotal + oneOffSubtotal}</div>
-  `;
-  
-  priceOutput.innerHTML = html;
-   addonsAfter = calculateAddOnsTotal();
-licenseSubtotal += addonsAfter;
-  ///priceOutput.innerHTML = html;
-  console.log("here: ",addonsAfter);
-  document.getElementById("subtotal").innerHTML="License Subtotal: " + licenseSubtotal+"$";
-  
-  document.getElementById("total").innerHTML= "$"+(oneOffSubtotal+licenseSubtotal);
-}*/
 
 function resetAllAddOns() {
   // Clear user-based selects
@@ -1444,6 +1342,16 @@ function buildUserAddOns(deployVal) {
     opt.textContent = `${item.tier} => $${item.annualCost} /year`;
     userDbStorageSelect.appendChild(opt);
   });
+
+  // 6) MCP (ADD THIS NEW SECTION)
+  userMcpSelect.innerHTML = "";
+  addDefaultOption(userMcpSelect);
+  userAddOnData.mcp.forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item.tier;
+    opt.textContent = `${item.tier} => $${item.annualCost} /year`;
+    userMcpSelect.appendChild(opt);
+  });
 }
 
 
@@ -1457,7 +1365,8 @@ function buildUsageAddOns(deployVal, modelVal) {
     "File Storage": "usageFileStorageSelect",
     "DB Storage": "usageDbStorageSelect",
     "Dashboard": "usageDashboardSelect",
-    "Public Apps": "usagePublicAppsSelect"
+    "Public Apps": "usagePublicAppsSelect",
+    "MCP": "usageMcpSelect" // <-- ADD THIS LINE
   };
 const normalize = str => str.toLowerCase().replace(/[^a-z0-9]/g, '');
   // Loop through each add-on type in the mapping
